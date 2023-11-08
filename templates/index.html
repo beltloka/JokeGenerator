@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Joke Generator</title>
+    <!-- Add link to your CSS file if needed -->
+</head>
+<body>
+    <h1>Joke Generator</h1>
+    <button id="generate-joke-btn">Generate Joke</button>
+    <p id="joke"></p>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('generate-joke-btn').addEventListener('click', function() {
+            fetch('/generate-joke', {
+                method: 'POST',
+                headers: {
+                    <!-- data in JSON format -->
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('joke').textContent = data.joke;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
