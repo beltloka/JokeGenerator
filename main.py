@@ -9,8 +9,8 @@ from config import config  # Import the configuration
 app = Flask(__name__)
 
 
-def get_joke():
-    response = requests.get('https://v2.jokeapi.dev/joke/Pun?type=single')
+def get_joke(category='Misc'):
+    response = requests.get(f'https://v2.jokeapi.dev/joke/{category}?type=single')
     if response.status_code == 200:
         return response.json()['joke']
     else:
@@ -28,9 +28,25 @@ def save_joke(joke):
     cursor.close()
     connection.close()
 
+def fetch_jokes_from_db():
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM jokes ORDER BY created_at DESC")
+    jokes_list = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return jokes_list
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/jokes')
+def jokes():
+    # Fetch jokes from the database
+    jokes_list = fetch_jokes_from_db()
+    return jsonify(jokes=jokes_list)
+
 
 @app.route('/generate-joke', methods=['POST'])
 def generate_joke():

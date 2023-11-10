@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Joke Generator</title>
-    <!-- Add link to your CSS file if needed -->
+    <!-- Add link to your CSS file -->
 </head>
 <body>
     <h1>Joke Generator</h1>
     <button id="generate-joke-btn">Generate Joke</button>
-    <p id="joke"></p>
+    <div id="joke"></div>
+    <button id="load-jokes-btn">Load Existing Jokes</button>
+    <h2>All Jokes</h2>
+    <!-- Jokes stored on DB will be appended here -->
+    <ul id="jokes-list"></ul>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -16,7 +20,7 @@
             fetch('/generate-joke', {
                 method: 'POST',
                 headers: {
-                    <!-- data in JSON format -->
+                    // data in JSON format
                     'Content-Type': 'application/json'
                 }
             })
@@ -28,6 +32,27 @@
                 console.error('Error:', error);
             });
         });
+        // function to load jokes stored in database
+        function loadJokesFromDB() {
+               fetch('/jokes', {
+                    method: 'GET'
+               })
+               .then(response => response.json())
+               .then(data => {
+                    const jokesList = document.getElementById('jokes-list');
+                    jokesList.innerHTML = ''; // clearing current list
+                    data.jokes.forEach(joke => {
+                        let listItem = document.createElement('li');
+                        listItem.textContent = joke.joke + " - " + new Date(joke.created_at).toLocaleString();
+                        jokesList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error', error);
+                });
+        }
+        // Event listener for getting existing jokes from DB
+        document.getElementById('load-jokes-btn').addEventListener('click', loadJokesFromDB);
     });
 </script>
 
