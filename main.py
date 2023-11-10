@@ -6,6 +6,7 @@ import mysql.connector
 from datetime import datetime
 from config import config  # Import the configuration
 
+
 app = Flask(__name__)
 
 
@@ -35,6 +36,11 @@ def fetch_jokes_from_db():
     jokes_list = cursor.fetchall()
     cursor.close()
     connection.close()
+
+    # handling datetime format from DB to reflect correctly in UI
+    for joke in jokes_list:
+        # converting format datetime object to CST timezone
+        joke['created_at'] = joke['created_at'].strftime('%m/%d/%Y, %I:%M:%S %p')
     return jokes_list
 
 @app.route('/')

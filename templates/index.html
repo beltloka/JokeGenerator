@@ -43,7 +43,7 @@
                     jokesList.innerHTML = ''; // clearing current list
                     data.jokes.forEach(joke => {
                         let listItem = document.createElement('li');
-                        listItem.textContent = joke.joke + " - " + new Date(joke.created_at).toLocaleString();
+                        listItem.textContent = joke.joke + " - " + joke.created_at;
                         jokesList.appendChild(listItem);
                     });
                 })
